@@ -1,0 +1,7 @@
+<div class="card">
+   <p-tabView (onChange)="tabChange($event,activeItem)" [(activeIndex)]="activeItem">
+    <p-tabPanel *ngFor="let item of items ; let i = index" header="{{item.label}}" >
+        <app-report-child *ngIf="showReport && activeItem === i"></app-report-child>
+    </p-tabPanel>
+</p-tabView>
+</div>

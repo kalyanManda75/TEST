@@ -1,0 +1,43 @@
+<!-- <p>reports works!</p> -->
+<p-dropdown 
+    [options]="reportsData" (onChange)="changeReport(selectedCity)"
+    [(ngModel)]="selectedCity" 
+    optionLabel="label" optionValue="value"
+    placeholder="Select a Report" />
+
+
+    <!-- <div *ngFor="let item of reportJsonStracture.masterDataForm">
+        <label >{{item.label}}</label>
+        <input type="text" pInputText *ngIf="item.inputType == 'input'"/>
+        <p-dropdown  *ngIf="item.inputType == 'dropdown'" [options]="item.data" [(ngModel)]="item.selectedValue" (onChange)="searchData(item.field,item.selectedValue)" />
+    </div> -->
+
+
+
+    <p-table #table [value]="reportResponseData" [tableStyle]="{ 'min-width': '50rem' }" [paginator]="reportResponseData.length > 10" [rows]="10"
+    [rowsPerPageOptions]="[5, 10, 20]">
+    <ng-template pTemplate="header">
+        <tr >
+            <th *ngFor = "let item of tableHeaders">{{ item.label }}</th>
+        </tr>
+        <tr>
+            <th *ngFor = "let filter of tableFilters">
+            <p-columnFilter *ngIf="filter.isFilter" 
+                        type="text" 
+                        field="{{filter.field}}" 
+                        placeholder="Search by {{filter.label}}" 
+                        ariaLabel="Filter Name" />
+                      
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-product>
+        <tr>
+            <td *ngFor = "let item of tableHeaders">{{ product[item.field] }}</td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<p-blockUI  [blocked]="blockedPanel" *ngIf="blockedPanel">
+<p-progressSpinner ariaLabel="loading" />
+</p-blockUI>

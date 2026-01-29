@@ -1,0 +1,148 @@
+<!-- !reportJsonStracture.isPagedDataSource && totalRecords > 10 -->
+ <!-- [reorderableColumns]="true"  -->
+
+ <div class="table-details-container">
+    <div class="table-section">
+ <p-table #dt2 *ngIf="reportJsonStracture.isPagedDataSource ? true : !blockedPanel" [value]="reportResponseData" [tableStyle]="{ 'min-width': '50rem' }" [paginator]="false" [rows]="reportJsonStracture.rows"
+    [rowsPerPageOptions]="reportJsonStracture.rowsPerPageOptions"  resizableColumns="true" [scrollable]="true"  [globalFilterFields]="globalSearchKeys" 
+    (onPage)="reportJsonStracture.isPagedDataSource ? onPageChange($event) : ''" [totalRecords]="totalRecords" rowGroupMode="subheader" scrollHeight="600px" 
+    [groupRowsBy]="reportJsonStracture.groupRowsBy.name" (onLazyLoad)="onSort($event)" [lazy]="reportJsonStracture.isPagedDataSource ? true : false" (sort)="onSort($event)">
+    <ng-template pTemplate="caption">
+        <div style="text-align: right;">
+            <p-iconField iconPosition="left" class="ml-auto">
+                <p-inputIcon>
+                    <i class="pi pi-search"></i>
+                </p-inputIcon>
+                <input 
+                    pInputText 
+                    type="text" 
+                    (input)="globalSearchText = $any($event.target).value; dt2.filterGlobal($any($event.target).value, 'contains')" 
+                    placeholder="Search keyword" />
+            </p-iconField>
+        </div>
+    </ng-template>
+    <!-- <ng-template pTemplate="frozenHeader">
+         <tr>
+            1111
+            <ng-container *ngFor = "let item of tableHeaders">
+                <th *ngIf="item.isColumnResize && item.frozenColumn" pFrozenColumn  pResizableColumn pSortableColumn="{{item.isSort ? item.field : null}}" >{{ item.label }}<p-sortIcon *ngIf="item.isSort" field="{{item.field}}" /></th>
+                <th *ngIf="!item.isColumnResize && item.frozenColumn" pFrozenColumn pSortableColumn="{{item.isSort ? item.field : null}}" >{{ item.label }}<p-sortIcon *ngIf="item.isSort" field="{{item.field}}" /></th>
+            </ng-container>
+         </tr>
+    </ng-template>
+    <ng-template pTemplate="frozenBody" let-row>
+        ppppp
+  <tr>
+    <ng-container *ngFor="let item of tableHeaders">
+      <td *ngIf="item.frozenColumn" pFrozenColumn>
+        {{ row[item.field] }}
+      </td>
+    </ng-container>
+  </tr>
+</ng-template> -->
+    <ng-template pTemplate="header" >
+        <tr >
+            <ng-container *ngFor = "let item of tableHeaders" >
+                <!-- <th *ngIf="item.isColumnResize && item.frozenColumn" pFrozenColumn  pResizableColumn pSortableColumn="{{item.isSort ? item.field : null}}" >{{ item.label }}<p-sortIcon *ngIf="item.isSort" field="{{item.field}}" /></th>
+                <th *ngIf="!item.isColumnResize && item.frozenColumn" pFrozenColumn pSortableColumn="{{item.isSort ? item.field : null}}" >{{ item.label }}<p-sortIcon *ngIf="item.isSort" field="{{item.field}}" /></th> -->
+            
+                <th *ngIf="item.isColumnResize && !item.frozenColumn"  pResizableColumn [pSortableColumn]="item.isSort ? item.field : null" >{{ item.label }}<p-sortIcon *ngIf="item.isSort" field="{{item.field}}" /></th>
+                <th *ngIf="!item.isColumnResize && !item.frozenColumn" [pSortableColumn]="item.isSort ? item.field : null" >{{ item.label }}<p-sortIcon *ngIf="item.isSort" field="{{item.field}}" /></th>
+            </ng-container>
+            
+        </tr>
+        <tr>
+            <th *ngFor = "let filter of tableHeaders; let ind=index;">
+            <p-columnFilter *ngIf="filter.isFilter && reportId != '_IP'" 
+                        type="text" 
+                        field="{{filter.field}}" 
+                        placeholder="Search by {{filter.label}}" 
+                        ariaLabel="Filter Name" />
+            <input *ngIf="filter.isFilter && reportId == '_IP'"
+                    pInputText 
+                    type="text" [(ngModel)]="filter.searchData" placeholder="Search By {{filter.label}}"
+                    (input)="searchField(filter.searchData,filter.field)"  />
+                      
+            </th>
+        </tr>
+    </ng-template>
+     <ng-template pTemplate="groupheader" let-customer *ngIf="reportJsonStracture.showGroupHead" let-expanded="expanded">
+        <tr pRowGroupHeader>
+            <td [attr.colspan]="tableHeaders.length">
+                <button 
+                        type="button" 
+                        pButton 
+                        pRipple 
+                        [pRowToggler]="customer" 
+                        class="p-button-text p-button-rounded p-button-plain mr-2" 
+                        [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'">
+                    </button>
+                <span style="font-weight: bold;">{{customer[reportJsonStracture.groupRowsBy.name]}}</span>
+            </td>
+        </tr>
+     </ng-template>
+    <ng-template pTemplate="{{reportJsonStracture.showGroupHead ? 'rowexpansion' : 'body'}}" let-product>
+        <tr>
+
+            <ng-container *ngFor="let item of tableHeaders">
+      <!-- <td *ngIf="item.frozenColumn" pFrozenColumn>
+        <ng-container *ngFor="let part of transform(product[item.field],globalSearchText,item)">
+                    <span [class.mark]="part.highlight" (click)="onCellClick(item, product)"  [innerHTML]="part.text"></span>
+                </ng-container>
+      </td> -->
+      <td *ngIf="!item.frozenColumn">
+        <ng-container *ngFor="let part of transform(product[item.field],globalSearchText,item)">
+                    <span [class.mark]="part.highlight" (click)="onCellClick(item, product)"  [innerHTML]="part.text"></span>
+                </ng-container>
+      </td>
+    </ng-container>
+
+
+             <!-- <td *ngFor="let item of tableHeaders"> 
+                <ng-container *ngFor="let part of transform(product[item.field],globalSearchText,item)">
+                    <span *ngIf="!item.frozenColumn" [class.mark]="part.highlight" (click)="onCellClick(item, product)"  [innerHTML]="part.text"></span>
+                </ng-container>
+    </td> -->
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <!-- <span>Total Records: {{ reportResponseData.length }}</span> -->
+    </ng-template>
+</p-table>
+</div>
+ <!-- Details Pane -->
+  <p-card *ngIf="selectedOrder">
+  <div class="details-pane" >
+    <div class="details-header">
+      <strong>Patient Details</strong>
+      <button class="close-btn" (click)="closeDetails()">✕</button>
+    </div>
+    <div class="details-body">
+      <p><strong>Admission Number:</strong> {{ selectedOrder.ADMN_NO }}</p>
+      <p><strong>Patient Name:</strong> {{ selectedOrder.PATIENT_NAME }}</p>
+    </div>
+  </div>
+  </p-card>
+</div>
+ <!-- </p-blockUI> -->
+
+<div class="card flex justify-content-center" *ngIf="reportJsonStracture.isPagedDataSource && reportResponseData.length > 0">
+    <p-paginator 
+        (onPageChange)="onPageChange($event)" 
+        [first]="first" 
+        [rows]="rows" 
+        [totalRecords]="totalRecords" 
+        [rowsPerPageOptions]="reportJsonStracture.rowsPerPageOptions" />
+</div>
+
+
+ <div style="text-align: center;">
+        <p-progressSpinner ariaLabel="loading" *ngIf="blockedPanel"/> 
+ </div>
+ <div class="card">
+    <p-messages 
+        [(value)]="messages" 
+        [enableService]="false" 
+        [closable]="false" />
+</div>
+    
